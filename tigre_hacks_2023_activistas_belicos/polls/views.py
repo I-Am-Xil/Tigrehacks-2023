@@ -64,9 +64,10 @@ def logout(request):
     
     return redirect("/")
 
+#* test view
 def auth_status(request):
     if request.user.is_authenticated:
-        return HttpResponse("You are Authenticated")
+        return HttpResponse(f"You are Authenticated {request.user.id}")
     
     return HttpResponse("You are not Authenticated")
 
