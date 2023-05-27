@@ -75,8 +75,12 @@ WSGI_APPLICATION = 'tigre_hacks_2023_activistas_belicos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tigre_hacks_2023_hactivistas_belicos',
+        'USER': 'root',
+        'PASSWORD': 'Parangaricutirimicuaro',
+        'HOST':'localhost',
+        'PORT':'3306',
     }
 }
 
