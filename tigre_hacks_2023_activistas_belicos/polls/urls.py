@@ -11,6 +11,6 @@ urlpatterns = [
     path("subscribe", views.subscribe, name="subscribe"),
     path("unsubscribe", views.unsubscribe, name="unsubscribe"),
     path("geocode_access", views.geocode_access, name="geocode_access"),
-    path("account", views.account, name="account"),
-    path("pagina_riesgo", views.pagina_riesgo, name="pagina_riesgo")
+    path("account", views.account, name="account")
+    #path("pagina_riesgo", views.pagina_riesgo, name="pagina_riesgo")
 ]
