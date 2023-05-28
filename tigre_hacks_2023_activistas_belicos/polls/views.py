@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
+from django.template import loader
 from . import models
 import requests
 from datetime import date
@@ -93,8 +94,12 @@ def account(request):
         return redirect("login")
     
     suscription_state = models.Suscripcion.objects.get(user_id=request.user.id).estado_suscripcion
-    
-    return render(request, "account.html")
+
+    template = loader.get_template("account.html")
+    context = {
+        'suscription_state': suscription_state
+    }
+    return HttpResponse(template.render(context, request))
 
 
 def about(request):
@@ -107,11 +112,8 @@ def subscribe(request):
 
     user_id = request.user.id
 
-    suscription_state = NOSUSCRITO
-
-    if models.Suscripcion.objects.filter(user_id=user_id).exists():
-        suscription_state_get = models.Suscripcion.objects.get(user_id=user_id)
-        suscription_state = suscription_state_get.estado_suscripcion
+    suscription_state_get = models.Suscripcion.objects.get(user_id=user_id)
+    suscription_state = suscription_state_get.estado_suscripcion
 
     if suscription_state == SUSCRITO:
         return redirect("account")
@@ -120,13 +122,20 @@ def subscribe(request):
         subscribing = request.POST["subscribe"]
 
         inicio_suscripcion = date.today()
-        fin_suscripcion = date(inicio_suscripcion.year, inicio_suscripcion.month+1, inicio_suscripcion.day)
+
+        end_month = inicio_suscripcion.month+1
+        if end_month > 12:
+            fin_suscripcion = date(inicio_suscripcion.year+1, 1, inicio_suscripcion.day)
+        else:
+            fin_suscripcion = date(inicio_suscripcion.year, inicio_suscripcion.month+1, inicio_suscripcion.day)
         
         user_filter = models.Suscripcion.objects.filter(user_id=user_id)
         user_filter.update(estado_suscripcion=SUSCRITO, fecha_ultimo_pago=inicio_suscripcion, vencimiento_suscripcion=fin_suscripcion)
 
         #print(inicio_suscripcion)
         #print(fin_suscripcion)
+
+        return redirect("/")
     return render(request, "subscribe.html")
 
 
@@ -143,9 +152,10 @@ def unsubscribe(request):
         return redirect("subscribe")
     
     if request.method == "POST":
-        pass
+        user_filter = models.Suscripcion.objects.filter(user_id=user_id)
+        user_filter.update(estado_suscripcion=NOSUSCRITO, fecha_ultimo_pago=None, vencimiento_suscripcion=None)
 
-    return HttpResponse("unsubscribe")
+    return redirect("account")
 
 
 def geocode_access(request):
@@ -174,14 +184,14 @@ def geocode_access(request):
             else:
                 final_address_2 += i
 
-        print(initial_address_2)
-        print(final_address_2)
+        #print(initial_address_2)
+        #print(final_address_2)
 
         initial_address_url = f"{api_link}{initial_address_2}&apiKey={api_token}"
         final_address_url = f"{api_link}{initial_address_2}&apiKey={api_token}"
 
-        print(initial_address_url)
-        print(final_address_url)
+        #print(initial_address_url)
+        #print(final_address_url)
 
         initial_address_request = requests.get(f"{api_link}{initial_address_2}&apiKey={api_token}")
         final_address_request = requests.get(f"{api_link}{initial_address_2}&apiKey={api_token}")

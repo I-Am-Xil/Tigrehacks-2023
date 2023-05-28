@@ -8,8 +8,8 @@ urlpatterns = [
     path("logout", views.logout, name="logout"),
     path("auth_status", views.auth_status, name="auth_status"),
     path("about", views.about, name="about"),
-    path("account/subscribe", views.subscribe, name="subscribe"),
-    path("account/unsubscribe", views.unsubscribe, name="unsubscribe"),
+    path("subscribe", views.subscribe, name="subscribe"),
+    path("unsubscribe", views.unsubscribe, name="unsubscribe"),
     path("geocode_access", views.geocode_access, name="geocode_access"),
     path("account", views.account, name="account")
 ]
