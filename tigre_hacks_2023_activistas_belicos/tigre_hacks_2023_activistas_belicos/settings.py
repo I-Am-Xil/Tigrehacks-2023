@@ -20,12 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'https://tigrehacks2023keyvault.vault.azure.net/keys/web-app-key/91c88e388dff4cbeb69336cedbfe7602'
+SECRET_KEY = "8$aKM'+XT'uum2z"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["tigre-hacks-2023-hactivistas-belicos.azurewebsites.net"]
+ALLOWED_HOSTS = ["tigre-hacks-2023-hactivistas-belicos.azurewebsites.net", "127.0.0.1"]
 
 
 # Application definition
