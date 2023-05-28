@@ -7,6 +7,7 @@ from django.template import loader
 from . import models
 import requests
 from datetime import date
+from . import load_model
 # Create your views here.
 
 SUSCRITO = True
@@ -200,3 +201,6 @@ def geocode_access(request):
 
     
     return render(request, "geocode_access.html")
+
+def pagina_riesgo(request):
+    return HttpResponse(f"{load_model.load_model.retornar_riesgo()}")
