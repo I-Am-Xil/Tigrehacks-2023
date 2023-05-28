@@ -1,6 +1,12 @@
 <h1>Account</h1>
 
+{% if suscription_state %}
 <form method="post" action="unsubscribe">
     {% csrf_token %}
     <input type="submit" name="unsubscribe" value="Unsubscribe"/>
 </form>
+{% else %}
+<form method="get" action="subscribe">
+    <input type="submit" name="subscribe" value="Subscribe"/>
+</form>
+{% endif %}

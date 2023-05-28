@@ -5,6 +5,7 @@ from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from . import models
 import requests
+from datetime import date
 # Create your views here.
 
 SUSCRITO = True
@@ -30,27 +31,27 @@ def register(request):
             messages.info(request, "Username Cant Be None")
             return redirect("register")
 
-        if password == password2:
-            if User.objects.filter(email=email).exists():
-                messages.info(request, "Email Already Used")
-                return redirect("register")
+        if password != password2:
+            messages.info(request, "Passwords don't match")
+            return redirect("register")
+
+        if User.objects.filter(email=email).exists():
+            messages.info(request, "Email Already Used")
+            return redirect("register")
             
-            if User.objects.filter(username=username).exists():
-                messages.info(request, "Username Already Used")
-                return redirect("register")
+        if User.objects.filter(username=username).exists():
+            messages.info(request, "Username Already Used")
+            return redirect("register")
             
-            user_create = User.objects.create_user(username=username, email=email, password=password)
-            user_create.save()
+        user_create = User.objects.create_user(username=username, email=email, password=password)
+        user_create.save()
 
-            user = auth.authenticate(username=username, password=password)
-            auth.login(request, user)
+        user = auth.authenticate(username=username, password=password)
+        auth.login(request, user)
 
-            models.Suscripcion.objects.create(user_id=request.user.id, estado_suscripcion=False)
+        models.Suscripcion.objects.create(user_id=request.user.id, estado_suscripcion=False)
 
-            return redirect("/")
-        
-        messages.info(request, "Passwords don't match")
-        return redirect("register")
+        return redirect("/")
 
     return render(request, "register.html")
 
@@ -88,17 +89,12 @@ def auth_status(request):
 
 
 def account(request):
-    if request.user.is_authenticated:
-        suscription_state = models.Suscripcion.objects.get(user_id=request.user.id).estado_suscripcion
-
-        if suscription_state == SUSCRITO:
-            mystring = "Estas suscrito"
-        else:
-            mystring = ""
-
-        return render(request, "account.html")
+    if not request.user.is_authenticated:
+        return redirect("login")
     
-    return redirect("login")
+    suscription_state = models.Suscripcion.objects.get(user_id=request.user.id).estado_suscripcion
+    
+    return render(request, "account.html")
 
 
 def about(request):
@@ -123,17 +119,30 @@ def subscribe(request):
     if request.method == "POST":
         subscribing = request.POST["subscribe"]
 
-        user_filter = models.Suscripcion.objects.filter(user_id=request.user.id)
-        user_filter.update(suscription_state=SUSCRITO)
+        inicio_suscripcion = date.today()
+        fin_suscripcion = date(inicio_suscripcion.year, inicio_suscripcion.month+1, inicio_suscripcion.day)
+        
+        user_filter = models.Suscripcion.objects.filter(user_id=user_id)
+        user_filter.update(estado_suscripcion=SUSCRITO, fecha_ultimo_pago=inicio_suscripcion, vencimiento_suscripcion=fin_suscripcion)
 
+        #print(inicio_suscripcion)
+        #print(fin_suscripcion)
     return render(request, "subscribe.html")
 
 
 def unsubscribe(request):
     if not request.user.is_authenticated:
-        redirect("login")
+        return redirect("login")
+
+    user_id = request.user.id
     
-    if models.Suscripcion.objects.get(user_id=request.user.id).exists():
+    suscription_state_get = models.Suscripcion.objects.get(user_id=user_id)
+    suscription_state = suscription_state_get.estado_suscripcion
+
+    if suscription_state == NOSUSCRITO:
+        return redirect("subscribe")
+    
+    if request.method == "POST":
         pass
 
     return HttpResponse("unsubscribe")
