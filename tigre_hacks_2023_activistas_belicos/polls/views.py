@@ -201,6 +201,14 @@ def geocode_access(request):
 
     
     return render(request, "geocode_access.html")
+
+def emercency_call(request):
+    """
+    TODO: 
+    * Utilizar la twilio api para hacer una llamada a tu aseguradora
+    * Mandar un mensaje a tu agente personal de seguros.  
+    """
+    pass
 """
 def pagina_riesgo(request):
     return HttpResponse(f"{load_model.load_model.retornar_riesgo()}")
